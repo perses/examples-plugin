@@ -1,18 +1,18 @@
-import { pluginModuleFederation } from "@module-federation/rsbuild-plugin";
+import { ModuleFederationOptions, pluginModuleFederation } from "@module-federation/rsbuild-plugin";
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 
 export const assetPrefix = "/plugins/cluster-sentiment/";
 
 // Expose the components that will be used in the UI, either Perses UI or embedded.
-const exposedModules = [
-{ "cluster-sentiment-datasource" : "./panels/cluster-sentiment-panel" },
-{ "cluster-sentiment-query" : "./panels/cluster-sentiment-panel" },
-{ "cluster-sentiment-panel" : "./panels/cluster-sentiment-panel" },
+const exposedModules: ModuleFederationOptions["exposes"] = [
+{ "./cluster-sentiment-datasource" : "./src/datasources/cluster-sentiment-datasource" },
+{ "./cluster-sentiment-panel" : "./src/panels/cluster-sentiment-panel" },
+{ "./cluster-sentiment-query" : "./src/queries/cluster-sentiment-query" },
 ];
 
 export default defineConfig({
-  server: { port: 3009 },
+  server: { port: 3119 },
   dev: { assetPrefix },
   source: { entry: { main: "./src/index-federation.ts" } },
   output: {
@@ -20,7 +20,7 @@ export default defineConfig({
     copy: [
       { from: "package.json" },
       { from: "README.md" },
-      { from: "../LICENSE", to: "./LICENSE", toType: "file" },
+      { from: "LICENSE", to: "./LICENSE", toType: "file" },
     ],
     distPath: {
       root: "dist",
@@ -32,7 +32,7 @@ export default defineConfig({
   plugins: [
     pluginReact(),
     pluginModuleFederation({
-      name: "cluster-sentiment",
+      name: "ClusterSentiment",
       exposes: exposedModules,
       shared: {
         react: { requiredVersion: "18.2.0", singleton: true },

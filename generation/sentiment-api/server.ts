@@ -32,6 +32,10 @@ const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: 
 
   const filteredCluster = clusters.find((c)=> c.id === clusterId);
 
+  if(clusterId != "*" && !filteredCluster) {
+    return []; // Return empty if no cluster matches the given clusterId
+  }
+
   let pointIndex = 0;
   for (let currentTime = startTime; currentTime <= endTime; currentTime += 1000 * 30) {
     const cluster = filteredCluster ?? clusters[Math.floor(Math.random() * clusters.length)];
@@ -56,13 +60,19 @@ app.get('/api/v1/clusters', (req: Request, res: Response) => {
 });
 
 app.get('/api/v1/metrics', (req: Request, res: Response) => {
-  const { clusterId, start, end } = req.query;
+  const { query, start, end } = req.query;
 
   let parsedStartTime: number | undefined = undefined;
   let parsedEndTime: number | undefined = undefined;
 
-  if (clusterId && typeof clusterId !== 'string') {
-    return res.status(400).json({ error: 'Invalid clusterName parameter. It must be a string.' });
+  if(!query || typeof query !== 'string') {
+    return res.status(400).json({ error: 'Missing required parameter: query' });
+  }
+
+  const clusterId = /clusterId="([a-z0-9\*]+)"/.exec(query)?.[1];
+
+  if (!clusterId || typeof clusterId !== 'string') {
+    return res.status(400).json({ error: 'Invalid clusterId parameter, either missing or not a string.' });
   }
 
   if (start) {

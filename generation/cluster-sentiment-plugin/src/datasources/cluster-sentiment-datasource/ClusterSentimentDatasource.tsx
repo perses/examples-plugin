@@ -22,7 +22,7 @@ const createClient: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSent
     query: async (params, headers) => {
       let url = `${datasourceUrl}/api/search`;
       if (params) {
-        url += '?' + new URLSearchParams(params);
+        url += '?' + new URLSearchParams(params as Record<string, string>);
       }
       const init = {
         method: 'GET',
@@ -32,7 +32,10 @@ const createClient: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSent
       const response = await fetch(url, init);
 
       try {
-        return await response.json();
+        return {
+          status: response.ok ? 'success' : 'error',
+          data: await response.json()
+        };
       } catch (e) {
         console.error('Invalid response from server', e);
         throw new Error('Invalid response from server');

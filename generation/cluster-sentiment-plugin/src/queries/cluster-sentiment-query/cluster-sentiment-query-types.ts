@@ -6,9 +6,4 @@ export interface ClusterSentimentQuerySpec {
   datasource?: DatasourceSelector;
 }
 
-// TODO: import this type from your datasource or an existing datasource plugin
-export type DatasourceQueryResponse = {
-  status: string;
-  data: ClusterSentimentDatasourceResponse;
-  warnings?: string[];
-};
+export type DatasourceQueryResponse = ClusterSentimentDatasourceResponse;

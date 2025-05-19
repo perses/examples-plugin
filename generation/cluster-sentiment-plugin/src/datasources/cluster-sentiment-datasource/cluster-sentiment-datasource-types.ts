@@ -6,10 +6,10 @@ export interface ClusterSentimentDatasourceSpec {
   proxy?: HTTPProxy;
 }
 
-interface QueryRequestParameters extends Record<string, string> {
+interface QueryRequestParameters extends Record<string, string | undefined> {
   query: string;
-  start: string;
-  end: string;
+  start?: string;
+  end?: string;
 }
 
 interface ClusterSentimentDatasourceClientOptions {
@@ -17,11 +17,19 @@ interface ClusterSentimentDatasourceClientOptions {
   headers?: RequestHeaders;
 }
 
+ interface SentimentMetric {
+   clusterId: string;
+   value: number;
+   timestamp: number;
+ }
+
 export interface ClusterSentimentDatasourceResponse {
+  status: string;
+  warnings?: string[];
   data: {
-    happy: Array<{ clusterId: string, value: number, timestamp: number }>,
-    stressed: Array<{ clusterId: string, value: number, timestamp: number }>,
-    worried: Array<{ clusterId: string, value: number, timestamp: number }>,
+    happy: Array<SentimentMetric>,
+    stressed: Array<SentimentMetric>,
+    worried: Array<SentimentMetric>,
   }
 };
 

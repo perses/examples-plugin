@@ -6,5 +6,5 @@ import { ClusterSentimentPanelSettingsEditor } from "./ClusterSentimentPanelSett
 export const ClusterSentimentPanel: PanelPlugin<ClusterSentimentPanelOptions, ClusterSentimentPanelProps> = {
   PanelComponent: ClusterSentimentPanelComponent,
   panelOptionsEditorComponents: [{ label: 'Settings', content: ClusterSentimentPanelSettingsEditor }],
-  createInitialOptions: () => ({}),
+  createInitialOptions: () => ({ displayMode: "text" }),
 };

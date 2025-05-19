@@ -185,6 +185,12 @@ export interface ClusterSentimentPanelOptions {
 }
 ```
 
+4. Adjust the initial options of the panel to include the new `displayMode` setting in `ClusterSentimentPanel.tsx`:
+```diff
+-  createInitialOptions: () => ({}),
++  createInitialOptions: () => ({ displayMode: "text" }),
+```
+
 3. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
 ```typescript
 import { ReactElement, useMemo } from "react";

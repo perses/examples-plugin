@@ -1,0 +1,104 @@
+import express, { Request, Response } from 'express';
+
+const app = express();
+const port = process.env.PORT || 9915;
+
+app.use(express.json());
+
+interface TimeSeriesDataPoint {
+  timestamp: number;
+  value: number;
+  clusterId: string;
+}
+
+interface SentimentMetrics {
+  happy: TimeSeriesDataPoint[];
+  stressed: TimeSeriesDataPoint[];
+  worried: TimeSeriesDataPoint[];
+}
+
+const clusters = [
+  { name: 'cluster-1', id: '1', randomData: () => Math.floor(Math.random() * 100) },
+  { name: 'cluster-2', id: '2', randomData: (index:number) => Math.floor(Math.abs(Math.sin(index * 0.1)) * 100) },
+]
+
+// Helper function to generate mock time series data
+const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: number; endTime: number; clusterId?:string }): TimeSeriesDataPoint[] => {
+  const data: TimeSeriesDataPoint[] = [];
+
+  if (startTime > endTime) {
+    return []; // Return empty for invalid or impossible range
+  }
+
+  const filteredCluster = clusters.find((c)=> c.id === clusterId);
+
+  let pointIndex = 0;
+  for (let currentTime = startTime; currentTime <= endTime; currentTime += 1000 * 30) {
+    const cluster = filteredCluster ?? clusters[Math.floor(Math.random() * clusters.length)];
+    
+    if(!cluster) {
+      return [];
+    }
+
+    data.push({
+      timestamp: currentTime,
+      value: cluster.randomData(pointIndex++),
+      clusterId: cluster.id,
+    });
+  }
+
+  return data;
+};
+
+
+app.get('/api/v1/clusters', (req: Request, res: Response) => {
+  res.json(clusters);
+});
+
+app.get('/api/v1/metrics', (req: Request, res: Response) => {
+  const { clusterId, start, end } = req.query;
+
+  let parsedStartTime: number | undefined = undefined;
+  let parsedEndTime: number | undefined = undefined;
+
+  if (clusterId && typeof clusterId !== 'string') {
+    return res.status(400).json({ error: 'Invalid clusterName parameter. It must be a string.' });
+  }
+
+  if (start) {
+    const tempStart = parseInt(start as string, 10);
+    if (isNaN(tempStart)) {
+      return res.status(400).json({ error: 'Invalid start time parameter. It must be a number (Unix milliseconds).' });
+    }
+    parsedStartTime = tempStart;
+  }
+
+  if (end) {
+    const tempEnd = parseInt(end as string, 10);
+    if (isNaN(tempEnd)) {
+      return res.status(400).json({ error: 'Invalid end time parameter. It must be a number (Unix milliseconds).' });
+    }
+    parsedEndTime = tempEnd;
+  }
+
+  const now = Date.now();
+  const effectiveEndTime = parsedEndTime !== undefined ? parsedEndTime : now;
+  const effectiveStartTime = parsedStartTime !== undefined ? parsedStartTime : effectiveEndTime - (60 * 60 * 1000);
+
+  // Validate that effectiveStartTime is not after effectiveEndTime
+  if (effectiveStartTime > effectiveEndTime) {
+    return res.status(400).json({ error: 'Calculated start time is after end time. Please check your input or ensure the default range is valid.' });
+  }
+
+  const sentimentData: SentimentMetrics = {
+    happy: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
+    stressed: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
+    worried: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
+  };
+
+  res.json({ data: sentimentData });
+});
+
+app.listen(port, () => {
+  console.log(`Sentiment API server listening on port ${port}`);
+});

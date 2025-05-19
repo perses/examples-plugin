@@ -24,4 +24,5 @@ spec: close({
   legend?:        #legend
   thresholds?:    common.#thresholds
   querySettings?: #querySettings
+	displayMode: "text" | "emoji"
 })

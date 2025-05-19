@@ -15,5 +15,6 @@ export interface ClusterSentimentPanelOptions {
   legend?: LegendSpecOptions;
   thresholds?: ThresholdOptions;
   querySettings?: QuerySettingsOptions;
+  displayMode: "text" | "emoji"
 }
 

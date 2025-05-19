@@ -1,8 +1,21 @@
 import { ReactElement, useMemo } from "react";
 import { ClusterSentimentPanelProps } from "./cluster-sentiment-panel-types";
 
+function sentimentToEmoji(sentiment: string | undefined): string {
+  switch (sentiment) {
+    case "happy":
+      return "😊";
+    case "stressed":
+      return "😰";
+    case "worried":
+      return "😟";
+    default:
+      return "🤔";
+  }
+}
+
 export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps): ReactElement | null {
-  const { queryResults } = props;
+  const { queryResults, spec } = props;
 
   const firstQueryResult = queryResults[0];
 
@@ -34,7 +47,7 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
       padding:"4px" }}>
     {clustersData.map((cluster) => (
       <div key={cluster.clusterId}>
-        <p>I'm cluster {cluster.clusterId}, and I'm feeling {cluster.sentiment}</p>
+        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? cluster.sentiment : sentimentToEmoji(cluster.sentiment)}</p>
       </div>
     ))}
   </div>;

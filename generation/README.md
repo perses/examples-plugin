@@ -164,13 +164,47 @@ function buildTimeSeries(response?: DatasourceQueryResponse): TimeSeries[] {
 percli plugin generate --plugin.type=Panel --plugin.name=ClusterSentimentPanel
 ```
 
-2. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
+2. Adjust the cue model in `panel.cue` to include a new `displayMode` setting for the panel:
+```diff
+kind: "ClusterSentimentPanel"
+spec: close({
+  legend?:        #legend
+  thresholds?:    common.#thresholds
+  querySettings?: #querySettings
++ displayMode: "text" | "emoji"
+})
+```
+
+3. Adjust the types to match the cue model in `cluster-sentiment-panel-types.ts`:
+```diff
+export interface ClusterSentimentPanelOptions {
+  legend?: LegendSpecOptions;
+  thresholds?: ThresholdOptions;
+  querySettings?: QuerySettingsOptions;
++ displayMode: "text" | "emoji"
+}
+```
+
+3. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
 ```typescript
 import { ReactElement, useMemo } from "react";
 import { ClusterSentimentPanelProps } from "./cluster-sentiment-panel-types";
 
+function sentimentToEmoji(sentiment: string | undefined): string {
+  switch (sentiment) {
+    case "happy":
+      return "😊";
+    case "stressed":
+      return "😰";
+    case "worried":
+      return "😟";
+    default:
+      return "🤔";
+  }
+}
+
 export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps): ReactElement | null {
-  const { queryResults } = props;
+  const { queryResults, spec } = props;
 
   const firstQueryResult = queryResults[0];
 
@@ -187,7 +221,7 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
 
       data.push({ clusterId, lastValue, sentiment: labels?.sentiment });
     }
-    
+
     return data;
   }, [firstQueryResult]);
 
@@ -202,7 +236,7 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
       padding:"4px" }}>
     {clustersData.map((cluster) => (
       <div key={cluster.clusterId}>
-        <p>I'm cluster {cluster.clusterId}, and I'm feeling {cluster.sentiment}</p>
+        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? cluster.sentiment : sentimentToEmoji(cluster.sentiment)}</p>
       </div>
     ))}
   </div>;

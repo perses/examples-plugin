@@ -9,24 +9,26 @@ function buildTimeSeries(response?: DatasourceQueryResponse): TimeSeries[] {
     return [];
   }
 
-  let series: TimeSeries[] = [];
+  let map: Map<string, TimeSeries> = new Map();
 
-  series.push({
-    name: 'happy',
-    values: response.data.happy.map((point) => [point.timestamp, point.value]),
-  });
-  series.push({
-    name: 'stressed',
-    values: response.data.stressed.map((point) => 
-      [point.timestamp,point.value]
-    ),
-  });
-  series.push({
-    name: 'worried',
-    values: response.data.worried.map((point) => [point.timestamp, point.value]),
-  });
+  // group by clusterId and sentiment
+  for(const point of response.data) {
+    const key = point.clusterId + point.sentiment;
+    let series = map.get(key);
+    
+    if (!series) {
+      series = {
+        name: point.clusterId,
+        labels: { sentiment: point.sentiment, clusterId: point.clusterId },
+        values: [[ point.timestamp, point.value ]],
+      };
+    }
 
-  return series
+    series.values.push([ point.timestamp, point.value ]);
+    map.set(key, series);
+  }
+
+  return Array.from(map.values());
 }
 
 export const getTimeSeriesData: TimeSeriesQueryPlugin<ClusterSentimentQuerySpec>['getTimeSeriesData'] = async (

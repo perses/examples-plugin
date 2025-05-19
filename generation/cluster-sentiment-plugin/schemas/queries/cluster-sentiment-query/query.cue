@@ -7,7 +7,7 @@ import (
 kind: "ClusterSentimentQuery"
 spec: close({
 	datasource?: {
-		kind: "YourDatasourceKind"
+		kind: "ClusterSentimentDatasource"
 	}
 	query:             strings.MinRunes(1)
 })

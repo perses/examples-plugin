@@ -21,16 +21,13 @@ interface ClusterSentimentDatasourceClientOptions {
    clusterId: string;
    value: number;
    timestamp: number;
+   sentiment: string;
  }
 
 export interface ClusterSentimentDatasourceResponse {
   status: string;
   warnings?: string[];
-  data: {
-    happy: Array<SentimentMetric>,
-    stressed: Array<SentimentMetric>,
-    worried: Array<SentimentMetric>,
-  }
+  data: Array<SentimentMetric>;
 };
 
 export interface ClusterSentimentDatasourceClient extends DatasourceClient {

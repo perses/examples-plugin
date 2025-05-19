@@ -11,8 +11,8 @@ Here is a brief overview of the steps you will take:
 1. [Generate a plugin module with a datasource plugin](#generate-a-plugin-module-with-a-datasource-plugin) that will allow you to query the cluster sentiment API.
 2. [Generate a time series query plugin](#generate-a-timeseriesquery-plugin) that will allow you to transform the data returned by the datasource plugin into a format that can be used by a panel plugin.
 3. [Generate a panel plugin](#generate-a-panel-plugin) that will display the data returned by the query plugin in a chart.
-4. Generate a variable plugin that will allow you to list items based on a query to the cluster sentiment API.
-5. Install the plugin in your local Perses instance.
+4. [Install the plugin in your local Perses instance](#install-the-plugin-in-your-local-perses-instance).
+5. Generate a variable plugin that will allow you to list items based on a query to the cluster sentiment API.
 6. Create a dashboard that uses the plugin.
 
 
@@ -49,17 +49,14 @@ npm install
 +   clusterId: string;
 +   value: number;
 +   timestamp: number;
++   sentiment: string;
 + }
 
 interface ClusterSentimentDatasourceResponse{
   status: string;
   warnings?: string[];
 - data: any;
-+ data:{
-+   happy: Array<SentimentMetric>,
-+   stressed: Array<SentimentMetric>,
-+   worried: Array<SentimentMetric>,
-+ }
++ data: Array<SentimentMetric>;
 }
 ```
 6. Adjust the query parameters to match the cluster sentiment API in `cluster-sentiment-datasource-types.ts`
@@ -81,7 +78,14 @@ interface ClusterSentimentDatasourceResponse{
 percli plugin generate --plugin.type=TimeSeriesQuery --plugin.name=ClusterSentimentQuery
 ```
 
-2. Match the datasource response and query response types in `cluster-sentiment-query-types.ts`:
+2. Adjust the cue model in `query.cue` to match the datasource kind:
+```diff
+datasource?: {
+-   kind: "YourDatasourceKind"
++   kind: "ClusterSentimentDatasource"
+```
+
+3. Match the datasource response and query response types in `cluster-sentiment-query-types.ts`:
 ```diff
 + import { ClusterSentimentDatasourceResponse } from '../../datasources/cluster-sentiment-datasource';
 
@@ -95,39 +99,47 @@ percli plugin generate --plugin.type=TimeSeriesQuery --plugin.name=ClusterSentim
 + export type DatasourceQueryResponse = ClusterSentimentDatasourceResponse;
 ```
 
-3. Adjust the datasource kind in `constants.ts`, this will allow users in the UI to select the correct datasource:
+4. Adjust the datasource kind in `constants.ts`, this will allow users in the UI to select the correct datasource:
 ```diff
 - export const DATASOURCE_KIND = 'YourDatasourceKind';
 + export const DATASOURCE_KIND = 'ClusterSentimentDatasource';
 ```
 
-4. Map your datasource data into a time series format in `get-time-series-data.ts`. The `ClusterSentimentQuery` plugin will be used to transform the data returned by the `ClusterSentimentDatasource` plugin into a format that can be used by a panel plugin:
+5. Map your datasource data into a time series format in `get-time-series-data.ts`. The `ClusterSentimentQuery` plugin will be used to transform the data returned by the `ClusterSentimentDatasource` plugin into a format that can be used by a panel plugin:
 ```diff
-- return response.data.map((res) => {
--   const { name, values } = res;
--   // TODO: map your data to the timeseries format expected for Panel plugins
--   return {
--     name,
--     values,
--   };
-- });
-+  let series: TimeSeries[] = [];
+function buildTimeSeries(response?: DatasourceQueryResponse): TimeSeries[] {
+
+  ...
+
+-   return response.data.map((res) => {
+-     const { name, values } = res;
+-     // TODO: map your data to the timeseries format expected for Panel plugins
+-     return {
+-       name,
+-       values,
+-     };
+-   });
++   let map: Map<string, TimeSeries> = new Map();
++   // group by clusterId and sentiment
++   for(const point of response.data) {
++     const key = point.clusterId +point.sentiment;
++     let series = map.get(key);
++     
++     if (!series) {
++       series = {
++         name: point.clusterId,
++         labels: { sentiment: point.sentiment, clusterId: point.clusterId },
++         values: [[ point.timestamp, point.value ]],
++       };
++     }
++     series.values.push([ point.timestamp, point.value ]);
++     map.set(key, series);
++   }
 +
-+  series.push({
-+    name: 'happy',
-+    values: response.data.happy.map((point) => [point.timestamp, point.value]),
-+  });
-+  series.push({
-+    name: 'stressed',
-+    values: response.data.stressed.map((point) => [point.timestamp,point.value]),
-+  });
-+  series.push({
-+    name: 'worried',
-+    values: response.data.worried.map((point) => [point.timestamp, point.value]),
-+  });
-+  return series;
++   return Array.from(map.values());
+}
 ```
-5. Adjust the query client type in `get-time-series-data.ts`:
+6. Adjust the query client type in `get-time-series-data.ts`:
 ```diff
 + import { ClusterSentimentDatasourceClient } from '../../datasources/cluster-sentiment-datasource';
 
@@ -136,7 +148,7 @@ percli plugin generate --plugin.type=TimeSeriesQuery --plugin.name=ClusterSentim
 - const client = await context.datasourceStore.getDatasourceClient(
 + const client = await context.datasourceStore.getDatasourceClient<ClusterSentimentDatasourceClient>(
 ```
-6. Pass the query parameters to the datasource client in `get-time-series-data.ts`, start and end are optional but are available in the context, which is selected by the user in the UI:
+7. Pass the query parameters to the datasource client in `get-time-series-data.ts`, start and end are optional but are available in the context, which is selected by the user in the UI:
 ```diff
 - const response = await client.query({ query });
 + const response = await client.query({ 
@@ -152,3 +164,54 @@ percli plugin generate --plugin.type=TimeSeriesQuery --plugin.name=ClusterSentim
 percli plugin generate --plugin.type=Panel --plugin.name=ClusterSentimentPanel
 ```
 
+2. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
+```typescript
+import { ReactElement, useMemo } from "react";
+import { ClusterSentimentPanelProps } from "./cluster-sentiment-panel-types";
+
+export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps): ReactElement | null {
+  const { queryResults } = props;
+
+  const firstQueryResult = queryResults[0];
+
+  const clustersData = useMemo(() => {
+    if (firstQueryResult === undefined) {
+      return [];
+    }
+
+    const data = [];
+    for (const item of firstQueryResult.data.series) {
+      const { name, values, labels } = item;
+      const clusterId = name;
+      const lastValue = values[values.length - 1];
+
+      data.push({ clusterId, lastValue, sentiment: labels?.sentiment });
+    }
+    
+    return data;
+  }, [firstQueryResult]);
+
+  if (clustersData.length == 0) {
+    return <div>No data</div>
+  }
+
+  return <div style={{ 
+      display: 'grid',
+      alignContent:"center",
+      gap:"4px",
+      padding:"4px" }}>
+    {clustersData.map((cluster) => (
+      <div key={cluster.clusterId}>
+        <p>I'm cluster {cluster.clusterId}, and I'm feeling {cluster.sentiment}</p>
+      </div>
+    ))}
+  </div>;
+}
+```
+
+## Install the plugin in your local Perses instance
+
+1. Build the plugin:
+```bash
+percli plugin build
+```

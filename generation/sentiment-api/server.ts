@@ -5,16 +5,11 @@ const port = process.env.PORT || 9915;
 
 app.use(express.json());
 
-interface TimeSeriesDataPoint {
+interface SentimentDataPoint {
   timestamp: number;
   value: number;
   clusterId: string;
-}
-
-interface SentimentMetrics {
-  happy: TimeSeriesDataPoint[];
-  stressed: TimeSeriesDataPoint[];
-  worried: TimeSeriesDataPoint[];
+  sentiment: string;
 }
 
 const clusters = [
@@ -23,32 +18,29 @@ const clusters = [
 ]
 
 // Helper function to generate mock time series data
-const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: number; endTime: number; clusterId?:string }): TimeSeriesDataPoint[] => {
-  const data: TimeSeriesDataPoint[] = [];
+const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: number; endTime: number; clusterId?:string }): SentimentDataPoint[] => {
+  const data: SentimentDataPoint[] = [];
 
   if (startTime > endTime) {
     return []; // Return empty for invalid or impossible range
   }
 
-  const filteredCluster = clusters.find((c)=> c.id === clusterId);
-
-  if(clusterId != "*" && !filteredCluster) {
-    return []; // Return empty if no cluster matches the given clusterId
+  const clustersFilter = clusterId == "*"? clusters : clusters.filter((c) => c.id === clusterId);
+  
+  if(clustersFilter.length === 0) {
+    return []; // Return empty if no cluster matches the given clusterId  
   }
 
   let pointIndex = 0;
   for (let currentTime = startTime; currentTime <= endTime; currentTime += 1000 * 30) {
-    const cluster = filteredCluster ?? clusters[Math.floor(Math.random() * clusters.length)];
-    
-    if(!cluster) {
-      return [];
+    for (const cluster of clustersFilter) {
+      data.push({
+        timestamp: currentTime,
+        value: cluster.randomData(pointIndex++),
+        clusterId: cluster.id,
+        sentiment: ['happy', 'stressed', 'worried'][Math.floor(Math.random() * 3)],
+      });
     }
-
-    data.push({
-      timestamp: currentTime,
-      value: cluster.randomData(pointIndex++),
-      clusterId: cluster.id,
-    });
   }
 
   return data;
@@ -56,7 +48,10 @@ const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: 
 
 
 app.get('/api/v1/clusters', (req: Request, res: Response) => {
-  res.json(clusters);
+  res.json(clusters.map(cluster => ({
+    name: cluster.name,
+    id: cluster.id,
+  })));
 });
 
 app.get('/api/v1/metrics', (req: Request, res: Response) => {
@@ -100,11 +95,7 @@ app.get('/api/v1/metrics', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Calculated start time is after end time. Please check your input or ensure the default range is valid.' });
   }
 
-  const sentimentData: SentimentMetrics = {
-    happy: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
-    stressed: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
-    worried: generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId }),
-  };
+  const sentimentData = generateTimeSeriesData({ startTime: effectiveStartTime, endTime: effectiveEndTime, clusterId });
 
   res.json({ data: sentimentData });
 });

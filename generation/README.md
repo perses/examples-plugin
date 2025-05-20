@@ -257,6 +257,22 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
 percli plugin build
 ```
 
+2. Make sure the perses configuration has the plugin development mode enabled:
+```yaml
+plugin:
+  enable_dev: true
+```
+
+3. Start the local perses instance:
+```bash
+./scripts/api_backend_dev.sh  
+```
+
+3. Start the plugin using `percli` to register the plugin with the local perses instance:
+```bash
+percli plugin start
+```
+
 ## Generate a variable plugin
 
 TBD

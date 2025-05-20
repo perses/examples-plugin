@@ -17,8 +17,9 @@ Here is a brief overview of the steps you will take:
 
 
 ## Prerequisites
-- You have a working installation of [Node.js](https://nodejs.org/en/download/) v22 and [NPM](https://www.npmjs.com/get-npm).
-- You have installed [Perses CLI](https://perses.dev/perses/docs/cli/).
+- [Node.js](https://nodejs.org/en/download/) v22 and [NPM](https://www.npmjs.com/get-npm).
+- [CUE](https://cuelang.org/docs/introduction/installation/) v0.12+
+- [Perses CLI](https://perses.dev/perses/docs/cli/) v0.51+
 - You have [Perses running locally](https://perses.dev/perses/docs/installation/in-a-container/).
 
 ## Generate a plugin module with a Datasource plugin

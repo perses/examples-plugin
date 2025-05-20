@@ -12,8 +12,8 @@ Here is a brief overview of the steps you will take:
 2. [Generate a time series query plugin](#generate-a-timeseriesquery-plugin) that will allow you to transform the data returned by the datasource plugin into a format that can be used by a panel plugin.
 3. [Generate a panel plugin](#generate-a-panel-plugin) that will display the data returned by the query plugin in a chart.
 4. [Install the plugin in your local Perses instance](#install-the-plugin-in-your-local-perses-instance).
-5. Generate a variable plugin that will allow you to list items based on a query to the cluster sentiment API.
-6. Create a dashboard that uses the plugin.
+5. [Generate a variable plugin](#generate-a-variable-plugin) that will allow you to list items based on a query to the cluster sentiment API.
+6. [Create a dashboard that uses the plugin](#create-a-dashboard-that-uses-the-plugin).
 
 
 ## Prerequisites
@@ -255,3 +255,11 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
 ```bash
 percli plugin build
 ```
+
+## Generate a variable plugin
+
+TBD
+
+## Create a dashboard that uses the plugin
+
+TBD

@@ -1,5 +1,6 @@
 import { ReactElement, useMemo } from "react";
 import { ClusterSentimentPanelProps } from "./cluster-sentiment-panel-types";
+import { TimeSeriesValueTuple } from "@perses-dev/core";
 
 function sentimentToEmoji(sentiment: string | undefined): string {
   switch (sentiment) {
@@ -16,38 +17,40 @@ function sentimentToEmoji(sentiment: string | undefined): string {
 
 export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps): ReactElement | null {
   const { queryResults, spec } = props;
-
-  const firstQueryResult = queryResults[0];
-
+  
   const clustersData = useMemo(() => {
+    const firstQueryResult = queryResults[0];
+    
     if (firstQueryResult === undefined) {
       return [];
     }
 
-    const data = [];
+    const data = new Map<string, any>();
     for (const item of firstQueryResult.data.series) {
       const { name, values, labels } = item;
       const clusterId = name;
       const lastValue = values[values.length - 1];
 
-      data.push({ clusterId, lastValue, sentiment: labels?.sentiment });
+      if (!data.has(clusterId) && lastValue) {
+        data.set(clusterId, { clusterId: labels?.clusterId, timesamp: lastValue[0], value: lastValue[1], sentiment: labels?.sentiment });
+      }
     }
 
-    return data;
-  }, [firstQueryResult]);
+    return Array.from(data.values())
+  }, [queryResults]);
 
   if (clustersData.length == 0) {
     return <div>No data</div>
   }
 
   return <div style={{ 
-      display: 'grid',
-      alignContent:"center",
-      gap:"4px",
-      padding:"4px" }}>
+      display: 'flex',
+      gap:"8px",
+      padding:"8px" 
+    }}>
     {clustersData.map((cluster) => (
-      <div key={cluster.clusterId}>
-        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? cluster.sentiment : sentimentToEmoji(cluster.sentiment)}</p>
+      <div key={cluster.clusterId} style={{ border: "1px solid gray", padding: "8px", borderRadius: "4px" }}>
+        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? `${cluster.value}% ${cluster.sentiment}` : sentimentToEmoji(cluster.sentiment)}</p>
       </div>
     ))}
   </div>;

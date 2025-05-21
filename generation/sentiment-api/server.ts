@@ -15,8 +15,14 @@ interface SentimentDataPoint {
 }
 
 const clusters = [
-  { name: 'cluster-1', id: '1', randomData: () => Math.floor(Math.random() * 100) },
-  { name: 'cluster-2', id: '2', randomData: (index:number) => Math.floor(Math.abs(Math.sin(index * 0.1)) * 100) },
+  { name: 'cluster-1', id: '1', getData: (index:number) => Math.floor(Math.abs(Math.sin(index * 0.1 + Math.PI/2)) * 100), getSentiment: () => "happy" },
+  { name: 'cluster-2', id: '2', getData: (index:number) => {
+      const base = Math.sin(index * 0.05) * 50 + 50;
+      const noise = Math.random() * 20 - 10;
+      return Math.max(0, Math.min(100, base + noise));
+    }, getSentiment: () => "stressed" },
+  { name: 'cluster-3', id: '3', getData: (index:number) => (index % 20) * 5, getSentiment: () => "excited" },
+  { name: 'cluster-4', id: '4', getData: (index:number) => Math.floor(index / 10) * 10, getSentiment: () => "worried" },
 ]
 
 // Helper function to generate mock time series data
@@ -27,20 +33,20 @@ const generateTimeSeriesData = ({ startTime, endTime, clusterId }: { startTime: 
     return []; // Return empty for invalid or impossible range
   }
 
-  const clustersFilter = clusterId == "*"? clusters : clusters.filter((c) => c.id === clusterId);
+  const clustersFilter = clusterId == "*" ? clusters : clusters.filter((c) => c.id === clusterId);
   
   if(clustersFilter.length === 0) {
     return []; // Return empty if no cluster matches the given clusterId  
   }
 
-  let pointIndex = 0;
-  for (let currentTime = startTime; currentTime <= endTime; currentTime += 1000 * 30) {
-    for (const cluster of clustersFilter) {
+  for (const cluster of clustersFilter) {
+    let pointIndex = 0;
+    for (let currentTime = startTime; currentTime <= endTime; currentTime += 1000 * 30) {
       data.push({
         timestamp: currentTime,
-        value: cluster.randomData(pointIndex++),
+        value: cluster.getData(pointIndex++),
         clusterId: cluster.id,
-        sentiment: ['happy', 'stressed', 'worried'][Math.floor(Math.random() * 3)],
+        sentiment: cluster.getSentiment(),
       });
     }
   }

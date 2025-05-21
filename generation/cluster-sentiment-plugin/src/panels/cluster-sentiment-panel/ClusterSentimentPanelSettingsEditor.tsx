@@ -21,6 +21,10 @@ export function ClusterSentimentPanelSettingsEditor(props: ClusterSentimentPanel
     onChange({...value, thresholds });
   };
 
+  const handleDisplayModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange({ ...value, displayMode: event.target.value as ClusterSentimentPanelOptions['displayMode'] });
+  };
+
   return (
     <OptionsEditorGrid>
       <OptionsEditorColumn>
@@ -28,6 +32,16 @@ export function ClusterSentimentPanelSettingsEditor(props: ClusterSentimentPanel
       </OptionsEditorColumn>
       <OptionsEditorColumn>
         <ThresholdsEditor hideDefault thresholds={value.thresholds} onChange={handleThresholdsChange} />
+      </OptionsEditorColumn>
+      <OptionsEditorColumn>
+        <p>Display mode</p>
+        <select
+          value={value.displayMode}
+          onChange={handleDisplayModeChange}
+        >
+          <option value="text">Text</option>
+          <option value="emoji">Emoji</option>
+        </select>
       </OptionsEditorColumn>
     </OptionsEditorGrid>
   );

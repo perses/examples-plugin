@@ -20,7 +20,7 @@ Here is a brief overview of the steps you will take:
 - [Node.js](https://nodejs.org/en/download/) v22 and [NPM](https://www.npmjs.com/get-npm).
 - [CUE](https://cuelang.org/docs/introduction/installation/) v0.12+
 - [Perses CLI](https://perses.dev/perses/docs/cli/) v0.51+
-- You have [Perses running locally](https://perses.dev/perses/docs/installation/in-a-container/).
+- You have downloaded [Perses](https://github.com/preses/perses)
 
 ## Generate a plugin module with a Datasource plugin
 
@@ -128,7 +128,7 @@ function buildTimeSeries(response?: DatasourceQueryResponse): TimeSeries[] {
 +     
 +     if (!series) {
 +       series = {
-+         name: point.clusterId,
++         name: `${point.clusterId} ${point.sentiment}`,
 +         labels: { sentiment: point.sentiment, clusterId: point.clusterId },
 +         values: [[ point.timestamp, point.value ]],
 +       };
@@ -192,10 +192,32 @@ export interface ClusterSentimentPanelOptions {
 +  createInitialOptions: () => ({ displayMode: "text" }),
 ```
 
-3. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
+5. Adjust the panel editor to customize the `displayMode` setting in `ClusterSentimentPanelSettingsEditor.tsx`:
+```diff
++  const handleDisplayModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
++    onChange({ ...value, displayMode: event.target.value as ClusterSentimentPanelOptions['displayMode'] });
++  };
+
+...
+
+      </OptionsEditorColumn>
++      <OptionsEditorColumn>
++        <p>Display mode</p>
++        <select
++          value={value.displayMode}
++          onChange={handleDisplayModeChange}
++        >
++          <option value="text">Text</option>
++          <option value="emoji">Emoji</option>
++        </select>
++      </OptionsEditorColumn>
+```
+
+6. Implement the cluster sentiment panel in `ClusterSentimentPanelComponent.tsx`:
 ```typescript
 import { ReactElement, useMemo } from "react";
 import { ClusterSentimentPanelProps } from "./cluster-sentiment-panel-types";
+import { TimeSeriesValueTuple } from "@perses-dev/core";
 
 function sentimentToEmoji(sentiment: string | undefined): string {
   switch (sentiment) {
@@ -212,38 +234,40 @@ function sentimentToEmoji(sentiment: string | undefined): string {
 
 export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps): ReactElement | null {
   const { queryResults, spec } = props;
-
-  const firstQueryResult = queryResults[0];
-
+  
   const clustersData = useMemo(() => {
+    const firstQueryResult = queryResults[0];
+    
     if (firstQueryResult === undefined) {
       return [];
     }
 
-    const data = [];
+    const data = new Map<string, any>();
     for (const item of firstQueryResult.data.series) {
       const { name, values, labels } = item;
       const clusterId = name;
       const lastValue = values[values.length - 1];
 
-      data.push({ clusterId, lastValue, sentiment: labels?.sentiment });
+      if (!data.has(clusterId) && lastValue) {
+        data.set(clusterId, { clusterId: labels?.clusterId, timesamp: lastValue[0], value: lastValue[1], sentiment: labels?.sentiment });
+      }
     }
 
-    return data;
-  }, [firstQueryResult]);
+    return Array.from(data.values())
+  }, [queryResults]);
 
   if (clustersData.length == 0) {
     return <div>No data</div>
   }
 
   return <div style={{ 
-      display: 'grid',
-      alignContent:"center",
-      gap:"4px",
-      padding:"4px" }}>
+      display: 'flex',
+      gap:"8px",
+      padding:"8px" 
+    }}>
     {clustersData.map((cluster) => (
-      <div key={cluster.clusterId}>
-        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? cluster.sentiment : sentimentToEmoji(cluster.sentiment)}</p>
+      <div key={cluster.clusterId} style={{ border: "1px solid gray", padding: "8px", borderRadius: "4px" }}>
+        <p>I'm cluster {cluster.clusterId}, and I'm feeling {spec.displayMode == "text" ? `${cluster.value}% ${cluster.sentiment}` : sentimentToEmoji(cluster.sentiment)}</p>
       </div>
     ))}
   </div>;
@@ -257,18 +281,18 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
 percli plugin build
 ```
 
-2. Make sure the perses configuration has the plugin development mode enabled:
+2. Make sure the perses configuration has the plugin development mode enabled. In the `<perses root>/dev/perses.yaml`.
 ```yaml
 plugin:
   enable_dev: true
 ```
 
-3. Start the local perses instance:
+3. Start the local perses instance, from the perses root directory:
 ```bash
 ./scripts/api_backend_dev.sh  
 ```
 
-3. Start the plugin using `percli` to register the plugin with the local perses instance:
+4. Start the plugin using `percli` to register the plugin with the local perses instance:
 ```bash
 percli plugin start
 ```
@@ -279,4 +303,8 @@ TBD
 
 ## Create a dashboard that uses the plugin
 
-TBD
+1. You can now load the Perses UI and create a new dashboard using the plugin you just created.
+2. Run the [sentiment-api](./sentiment-api/README.md) and create a new datasource using the `ClusterSentimentDatasource` plugin and configure it to point to the sentiment API.
+3. Create a new dashboard and add a new panel using the `ClusterSentimentPanel` plugin, set the query to `clusterId="*"` to get all the clusters.
+4. You can customize the panel options to change the display mode to `text` or `emoji` in the settings tab of the panel.
+5. Save the dashboard and you should see the data from the sentiment API displayed in the panel.

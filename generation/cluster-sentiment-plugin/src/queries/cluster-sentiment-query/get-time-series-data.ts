@@ -18,7 +18,7 @@ function buildTimeSeries(response?: DatasourceQueryResponse): TimeSeries[] {
     
     if (!series) {
       series = {
-        name: point.clusterId,
+        name: `${point.clusterId} ${point.sentiment}`,
         labels: { sentiment: point.sentiment, clusterId: point.clusterId },
         values: [[ point.timestamp, point.value ]],
       };
@@ -47,14 +47,18 @@ export const getTimeSeriesData: TimeSeriesQueryPlugin<ClusterSentimentQuerySpec>
     spec.datasource ?? DEFAULT_DATASOURCE
   );
 
+  const { start, end } = context.timeRange;
+
   const response = await client.query({ 
-    start: context.timeRange.start.getTime().toString(), 
-    end: context.timeRange.end.getTime().toString(),
+    start: start.getTime().toString(),
+    end: end.getTime().toString(),
     query,
   });
 
   const chartData: TimeSeriesData = {
     series: buildTimeSeries(response),
+    timeRange: { start, end },
+    stepMs: 30 * 1000,
     metadata: {
       executedQueryString: query,
     },

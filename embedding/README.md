@@ -1,3 +1,3 @@
 # Perses plugin embedding
 
-- [Embeeding with vite](./vite/README.md)
+- [Embedding with vite](./vite/README.md)

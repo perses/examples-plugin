@@ -1,1 +1,1 @@
-export * from "./cluster-sentiment-datasource/ClusterSentimentDatasource";
+export * from "./cluster-sentiment-datasource";

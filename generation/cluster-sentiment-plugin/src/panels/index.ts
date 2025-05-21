@@ -1,1 +1,1 @@
-export * from "./cluster-sentiment-panel/ClusterSentimentPanel";
+export * from "./cluster-sentiment-panel";

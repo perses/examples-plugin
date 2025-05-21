@@ -1,1 +1,1 @@
-export * from "./cluster-sentiment-query/ClusterSentimentQuery";
+export * from "./cluster-sentiment-query";

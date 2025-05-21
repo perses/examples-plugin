@@ -20,7 +20,7 @@ const createClient: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSent
       datasourceUrl,
     },
     query: async (params, headers) => {
-      let url = `${datasourceUrl}/api/search`;
+      let url = `${datasourceUrl}/api/v1/metrics`;
       if (params) {
         url += '?' + new URLSearchParams(params as Record<string, string>);
       }
@@ -32,9 +32,10 @@ const createClient: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSent
       const response = await fetch(url, init);
 
       try {
+        const body = await response.json();
         return {
           status: response.ok ? 'success' : 'error',
-          data: await response.json()
+          data: body.data,
         };
       } catch (e) {
         console.error('Invalid response from server', e);
@@ -44,7 +45,7 @@ const createClient: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSent
   };
 };
 
-export const ClusterSentimentDatasourceDatasource: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSentimentDatasourceClient> = {
+export const ClusterSentimentDatasource: DatasourcePlugin<ClusterSentimentDatasourceSpec, ClusterSentimentDatasourceClient> = {
   createClient,
   OptionsEditorComponent: ClusterSentimentDatasourceEditor,
   createInitialOptions: () => ({ directUrl: '' }),

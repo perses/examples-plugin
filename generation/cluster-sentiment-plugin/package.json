@@ -74,21 +74,21 @@
         }
       }
       ,{
-        "kind": "Panel",
-        "spec": {
-          "display": {
-            "name": "ClusterSentimentPanel"
-          },
-          "name": "ClusterSentimentPanel"
-        }
-      }
-      ,{
         "kind": "TimeSeriesQuery",
         "spec": {
           "display": {
             "name": "ClusterSentimentQuery"
           },
           "name": "ClusterSentimentQuery"
+        }
+      }
+      ,{
+        "kind": "Panel",
+        "spec": {
+          "display": {
+            "name": "ClusterSentimentPanel"
+          },
+          "name": "ClusterSentimentPanel"
         }
       }
     ]

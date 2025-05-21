@@ -7,8 +7,8 @@ export const assetPrefix = "/plugins/ClusterSentiment/";
 // Expose the components that will be used in the UI, either Perses UI or embedded.
 const exposedModules: ModuleFederationOptions["exposes"] = [
   { "./ClusterSentimentDatasource" : "./src/datasources/cluster-sentiment-datasource" },
-  { "./ClusterSentimentPanel" : "./src/panels/cluster-sentiment-panel" },
   { "./ClusterSentimentQuery" : "./src/queries/cluster-sentiment-query" },
+  { "./ClusterSentimentPanel" : "./src/panels/cluster-sentiment-panel" },
 ];
 
 export default defineConfig({

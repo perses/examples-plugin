@@ -6,5 +6,6 @@ import { ClusterSentimentPanelSettingsEditor } from "./ClusterSentimentPanelSett
 export const ClusterSentimentPanel: PanelPlugin<ClusterSentimentPanelOptions, ClusterSentimentPanelProps> = {
   PanelComponent: ClusterSentimentPanelComponent,
   panelOptionsEditorComponents: [{ label: 'Settings', content: ClusterSentimentPanelSettingsEditor }],
+  supportedQueryTypes: ['TimeSeriesQuery'],
   createInitialOptions: () => ({ displayMode: "text" }),
 };

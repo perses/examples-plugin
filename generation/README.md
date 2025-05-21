@@ -303,8 +303,9 @@ TBD
 
 ## Create a dashboard that uses the plugin
 
-1. You can now load the Perses UI and create a new dashboard using the plugin you just created.
+1. Load the Perses UI and create a new dashboard using the plugin you just created.
 2. Run the [sentiment-api](./sentiment-api/README.md) and create a new datasource using the `ClusterSentimentDatasource` plugin and configure it to point to the sentiment API.
 3. Create a new dashboard and add a new panel using the `ClusterSentimentPanel` plugin, set the query to `clusterId="*"` to get all the clusters.
-4. You can customize the panel options to change the display mode to `text` or `emoji` in the settings tab of the panel.
+4. Customize the panel options to change the display mode to `text` or `emoji` in the settings tab of the panel.
 5. Save the dashboard and you should see the data from the sentiment API displayed in the panel.
+6. Use the `ClusterSentimentDatasource` to display data in other charts for example a time series panel.

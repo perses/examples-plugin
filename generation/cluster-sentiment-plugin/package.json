@@ -60,7 +60,7 @@
     "mf-stats.json"
   ],
   "perses": {
-    "moduleName": "cluster-sentiment",
+    "moduleName": "ClusterSentiment",
     "moduleOrg": "sentiment-org",
     "schemasPath": "schemas",
     "plugins": [
@@ -68,27 +68,27 @@
         "kind": "Datasource",
         "spec": {
           "display": {
-            "name": "cluster-sentiment-datasource"
+            "name": "ClusterSentimentDatasource"
           },
-          "name": "cluster-sentiment-datasource"
+          "name": "ClusterSentimentDatasource"
         }
       }
       ,{
         "kind": "Panel",
         "spec": {
           "display": {
-            "name": "cluster-sentiment-panel"
+            "name": "ClusterSentimentPanel"
           },
-          "name": "cluster-sentiment-panel"
+          "name": "ClusterSentimentPanel"
         }
       }
       ,{
         "kind": "TimeSeriesQuery",
         "spec": {
           "display": {
-            "name": "cluster-sentiment-query"
+            "name": "ClusterSentimentQuery"
           },
-          "name": "cluster-sentiment-query"
+          "name": "ClusterSentimentQuery"
         }
       }
     ]

@@ -1,5 +1,5 @@
 import { Header } from './Header';
-import { PersesWrapper } from './PersesPluginWrapper';
+import { PersesWrapper } from './components/PersesPluginWrapper';
 import persesLogo from '/src/assets/perses.svg';
 
 function App() {

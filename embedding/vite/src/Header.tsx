@@ -6,9 +6,10 @@ import React from 'react';
 
 interface HeaderProps {
   logo: string;
+  onNavigate?: (view: 'dashboard' | 'panel') => void;
 }
 
-export function Header({ logo }: HeaderProps) {
+export function Header({ logo, onNavigate }: HeaderProps) {
   return (
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -23,8 +24,12 @@ export function Header({ logo }: HeaderProps) {
             <span style={{ fontWeight: 600, fontSize: 20, color: 'white' }}>Perses Embed Example App</span>
           </a>
           <Box sx={{ paddingLeft: 2 }} />
-          <Button color="inherit">Dashboard</Button>
-          <Button color="inherit">Panel</Button>
+          <Button color="inherit" onClick={() => onNavigate?.('dashboard')}>
+            Dashboard
+          </Button>
+          <Button color="inherit" onClick={() => onNavigate?.('panel')}>
+            Panel
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>

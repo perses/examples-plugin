@@ -46,7 +46,7 @@ export const sampleDashboard: DashboardResource = {
             kind: 'PrometheusLabelValuesVariable',
             spec: {
               labelName: 'instance',
-              matchers: ['prometheus_build_info{job="$job"}'],
+              matchers: ['prometheus_build_info{job="prometheus"}'],
             },
           },
           name: 'instance',
@@ -95,7 +95,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'count by (job, instance, version) (prometheus_build_info{instance=~"$instance",job=~"$job"})',
+                      'count by (job, instance, version) (prometheus_build_info{instance="demo.prometheus.io:9090",job="prometheus"})',
                   },
                 },
               },
@@ -132,7 +132,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, scrape_job, instance) (\n  rate(prometheus_target_sync_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])\n)',
+                      'sum by (job, scrape_job, instance) (\n  rate(prometheus_target_sync_length_seconds_sum{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval])\n)',
                     seriesNameFormat: '{{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -165,7 +165,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (prometheus_sd_discovered_targets{instance=~"$instance",job=~"$job"})',
+                      'sum by (job, instance) (prometheus_sd_discovered_targets{instance="demo.prometheus.io:9090",job="prometheus"})',
                     seriesNameFormat: '{{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -203,7 +203,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      '  rate(prometheus_target_interval_length_seconds_sum{instance=~"$instance",job=~"$job"}[$__rate_interval])\n/\n  rate(prometheus_target_interval_length_seconds_count{instance=~"$instance",job=~"$job"}[$__rate_interval])',
+                      '  rate(prometheus_target_interval_length_seconds_sum{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval])\n/\n  rate(prometheus_target_interval_length_seconds_count{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval])',
                     seriesNameFormat: '{{job}} - {{instance}} - {{interval}} Configured',
                   },
                 },
@@ -236,7 +236,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_exceeded_body_size_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]\n  )\n)',
+                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_exceeded_body_size_limit_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval]\n  )\n)',
                     seriesNameFormat: 'exceeded body size limit: {{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -249,7 +249,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_exceeded_sample_limit_total{instance=~"$instance",job=~"$job"}[$__rate_interval]\n  )\n)',
+                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_exceeded_sample_limit_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval]\n  )\n)',
                     seriesNameFormat: 'exceeded sample limit: {{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -262,7 +262,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_duplicate_timestamp_total{instance=~"$instance",job=~"$job"}[$__rate_interval]\n  )\n)',
+                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_duplicate_timestamp_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval]\n  )\n)',
                     seriesNameFormat: 'duplicate timestamp: {{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -275,7 +275,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_out_of_bounds_total{instance=~"$instance",job=~"$job"}[$__rate_interval]\n  )\n)',
+                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_out_of_bounds_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval]\n  )\n)',
                     seriesNameFormat: 'out of bounds: {{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -288,7 +288,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_out_of_order_total{instance=~"$instance",job=~"$job"}[$__rate_interval]\n  )\n)',
+                      'sum by (job, instance) (\n  rate(\n    prometheus_target_scrapes_sample_out_of_order_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval]\n  )\n)',
                     seriesNameFormat: 'out of order: {{job}} - {{instance}} - Metrics',
                   },
                 },
@@ -321,7 +321,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'rate(prometheus_tsdb_head_samples_appended_total{instance=~"$instance",job=~"$job"}[$__rate_interval])',
+                      'rate(prometheus_tsdb_head_samples_appended_total{instance="demo.prometheus.io:9090",job="prometheus"}[$__rate_interval])',
                     seriesNameFormat: '{{job}} - {{instance}} - {{remote_name}} - {{url}}',
                   },
                 },
@@ -353,7 +353,7 @@ export const sampleDashboard: DashboardResource = {
                 plugin: {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
-                    query: 'prometheus_tsdb_head_series{instance=~"$instance",job=~"$job"}',
+                    query: 'prometheus_tsdb_head_series{instance="demo.prometheus.io:9090",job="prometheus"}',
                     seriesNameFormat: '{{job}} - {{instance}} - Head Series',
                   },
                 },
@@ -385,7 +385,7 @@ export const sampleDashboard: DashboardResource = {
                 plugin: {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
-                    query: 'prometheus_tsdb_head_chunks{instance=~"$instance",job=~"$job"}',
+                    query: 'prometheus_tsdb_head_chunks{instance="demo.prometheus.io:9090",job="prometheus"}',
                     seriesNameFormat: '{{job}} - {{instance}} - Head Chunks',
                   },
                 },
@@ -418,7 +418,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'rate(\n  prometheus_engine_query_duration_seconds_count{instance=~"$instance",job=~"$job",slice="inner_eval"}[$__rate_interval]\n)',
+                      'rate(\n  prometheus_engine_query_duration_seconds_count{instance="demo.prometheus.io:9090",job="prometheus",slice="inner_eval"}[$__rate_interval]\n)',
                     seriesNameFormat: '{{job}} - {{instance}} - Query Rate',
                   },
                 },
@@ -456,7 +456,7 @@ export const sampleDashboard: DashboardResource = {
                   kind: 'PrometheusTimeSeriesQuery',
                   spec: {
                     query:
-                      'max by (slice) (\n  prometheus_engine_query_duration_seconds{instance=~"$instance",job=~"$job",quantile="0.9"}\n)',
+                      'max by (slice) (\n  prometheus_engine_query_duration_seconds{instance="demo.prometheus.io:9090",job="prometheus",quantile="0.9"}\n)',
                     seriesNameFormat: '{{slice}} - Duration',
                   },
                 },

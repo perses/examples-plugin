@@ -8,7 +8,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { chartsTheme, datasourceApi, muiTheme, queryClient } from '../persesApi';
 import { pluginLoader } from './PersesPluginRegistry';
 
-export function PersesWrapper() {
+export function PersesPluginWrapper() {
   const persesTimeRange = {
     pastDuration: '1h' as DurationString,
   };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Header } from './Header';
-import PersesDashboard from './components/PersesDashboard';
+import PersesDashboardWrapper from './components/PersesDashboardWrapper';
 import { PersesPluginWrapper } from './components/PersesPluginWrapper';
 import persesLogo from '/src/assets/perses.svg';
 
@@ -10,7 +10,7 @@ function App() {
   return (
     <>
       <Header logo={persesLogo} onNavigate={setView} />
-      {view === 'dashboard' && <PersesDashboard />}
+      {view === 'dashboard' && <PersesDashboardWrapper />}
       {view === 'panel' && <PersesPluginWrapper />}
     </>
   );

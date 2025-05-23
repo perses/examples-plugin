@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider, Typography } from '@mui/material';
 import { ChartsProvider } from '@perses-dev/components';
 import { DurationString, PanelDefinition } from '@perses-dev/core';
 import { DatasourceStoreProvider, Panel, VariableProvider } from '@perses-dev/dashboards';
@@ -38,6 +38,9 @@ export function PersesPluginWrapper() {
   return (
     <>
       <h1>Plugin Embedding - Single Panel</h1>
+      <Typography variant="body1" sx={{ marginBottom: '1rem' }}>
+        Below is an example of embedding a Perses panel in a React application.
+      </Typography>
       <ThemeProvider theme={muiTheme}>
         <ChartsProvider chartsTheme={chartsTheme}>
           <PluginRegistry pluginLoader={pluginLoader}>

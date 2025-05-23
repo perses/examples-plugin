@@ -87,24 +87,27 @@ export function PersesWrapper() {
   const chartsTheme = generateChartsTheme(muiTheme, {});
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <ChartsProvider chartsTheme={chartsTheme}>
-        <PluginRegistry pluginLoader={pluginLoader}>
-          <QueryClientProvider client={queryClient}>
-            <TimeRangeProvider timeRange={persesTimeRange}>
-              <VariableProvider>
-                <DatasourceStoreProvider datasourceApi={datasourceApi}>
-                  <DataQueriesProvider definitions={queryDefinitions}>
-                    <div style={{ width: '500px', height: '200px' }}>
-                      <Panel definition={panelDefinition} />
-                    </div>
-                  </DataQueriesProvider>
-                </DatasourceStoreProvider>
-              </VariableProvider>
-            </TimeRangeProvider>
-          </QueryClientProvider>
-        </PluginRegistry>
-      </ChartsProvider>
-    </ThemeProvider>
+    <>
+      <h1>Plugin Embedding - Single Panel</h1>
+      <ThemeProvider theme={muiTheme}>
+        <ChartsProvider chartsTheme={chartsTheme}>
+          <PluginRegistry pluginLoader={pluginLoader}>
+            <QueryClientProvider client={queryClient}>
+              <TimeRangeProvider timeRange={persesTimeRange}>
+                <VariableProvider>
+                  <DatasourceStoreProvider datasourceApi={datasourceApi}>
+                    <DataQueriesProvider definitions={queryDefinitions}>
+                      <div style={{ width: '500px', height: '200px' }}>
+                        <Panel definition={panelDefinition} />
+                      </div>
+                    </DataQueriesProvider>
+                  </DatasourceStoreProvider>
+                </VariableProvider>
+              </TimeRangeProvider>
+            </QueryClientProvider>
+          </PluginRegistry>
+        </ChartsProvider>
+      </ThemeProvider>
+    </>
   );
 }

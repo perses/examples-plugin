@@ -65,7 +65,7 @@ import { ChartsProvider, ErrorAlert, ErrorBoundary } from '@perses-dev/component
 import { pluginLoader } from './PersesPluginRegistry';
 import { sampleDashboard } from '../dashboard-sample';
 
-export default function PersesDashboardWrapper() {
+export function PersesDashboardWrapper() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

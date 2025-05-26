@@ -13,7 +13,7 @@ import { pluginLoader } from './PersesPluginRegistry';
 import { sampleDashboard } from '../dashboard-sample';
 import { Typography } from '@mui/material';
 
-export default function PersesDashboardWrapper() {
+export function PersesDashboardWrapper() {
   return (
     <>
       <h1>Plugin Embedding - Dashboard</h1>

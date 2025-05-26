@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Header } from './Header';
-import PersesDashboardWrapper from './components/PersesDashboardWrapper';
+import { PersesDashboardWrapper } from './components/PersesDashboardWrapper';
 import { PersesPluginWrapper } from './components/PersesPluginWrapper';
 import persesLogo from '/src/assets/perses.svg';
 

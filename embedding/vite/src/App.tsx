@@ -1,20 +1,17 @@
-import { PersesWrapper } from './PersesWrapper';
+import { useState } from 'react';
+import { Header } from './Header';
+import { PersesDashboardWrapper } from './components/PersesDashboardWrapper';
+import { PersesPluginWrapper } from './components/PersesPluginWrapper';
 import persesLogo from '/src/assets/perses.svg';
 
 function App() {
+  const [view, setView] = useState<'dashboard' | 'panel'>('dashboard');
+
   return (
     <>
-      <div>
-        <a href="https://perses.dev" target="_blank">
-          <img src={persesLogo} className="logo" alt="Perses logo" />
-        </a>
-      </div>
-
-      <div>
-        <h1>Plugin Embedding - Single Panel</h1>
-      </div>
-
-      <PersesWrapper />
+      <Header logo={persesLogo} onNavigate={setView} />
+      {view === 'dashboard' && <PersesDashboardWrapper />}
+      {view === 'panel' && <PersesPluginWrapper />}
     </>
   );
 }

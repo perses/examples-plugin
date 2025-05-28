@@ -20,7 +20,7 @@
     "@perses-dev/panels-plugin": "^0.50.3",
     "@perses-dev/pie-chart-plugin": "^0.7.0",
     "@perses-dev/plugin-system": "^0.51.0-rc.0",
-    "@perses-dev/prometheus-plugin": "^0.51.0-beta.2",
+    "@perses-dev/prometheus-plugin": "^0.51.0-rc.0",
     "@perses-dev/scatter-chart-plugin": "^0.6.0",
     "@perses-dev/stat-chart-plugin": "^0.7.0",
     "@perses-dev/static-list-variable-plugin": "^0.3.0",

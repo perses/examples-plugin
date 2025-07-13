@@ -287,9 +287,21 @@ plugin:
   enable_dev: true
 ```
 
-3. Start the local perses instance, from the perses root directory:
+
+3. Start the local Perses backend and UI servers:
+
 ```bash
-./scripts/api_backend_dev.sh  
+# From the Perses root directory, start the backend server:
+./scripts/api_backend_dev.sh
+
+# In a new terminal, change to the ui directory:
+cd ui
+# Install dependencies (only needed once):
+npm install
+# Start the Perses app:
+npm run start
+# The app will be available at:
+# http://localhost:3000/
 ```
 
 4. Start the plugin using `percli` to register the plugin with the local perses instance:

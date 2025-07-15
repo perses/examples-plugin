@@ -20,7 +20,7 @@ Here is a brief overview of the steps you will take:
 - [Node.js](https://nodejs.org/en/download/) v22 and [NPM](https://www.npmjs.com/get-npm).
 - [CUE](https://cuelang.org/docs/introduction/installation/) v0.12+
 - [Perses CLI](https://perses.dev/perses/docs/cli/) v0.51+
-- You have downloaded [Perses](https://github.com/preses/perses)
+- You have cloned [Perses](https://github.com/perses/perses)
 
 ## Generate a plugin module with a Datasource plugin
 
@@ -294,10 +294,6 @@ plugin:
 
    - **Option 2: Using Docker**
      1. Follow the official instructions to run Perses in a Docker container: [Install in a Container](https://perses.dev/perses/docs/installation/in-a-container/)
-
-```bash
-# From the Perses root directory, start the backend server:
-./scripts/api_backend_dev.sh
 
 4. Start the plugin using `percli` to register the plugin with the local perses instance:
 ```bash

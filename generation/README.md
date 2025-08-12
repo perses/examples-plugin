@@ -20,7 +20,7 @@ Here is a brief overview of the steps you will take:
 - [Node.js](https://nodejs.org/en/download/) v22 and [NPM](https://www.npmjs.com/get-npm).
 - [CUE](https://cuelang.org/docs/introduction/installation/) v0.12+
 - [Perses CLI](https://perses.dev/perses/docs/cli/) v0.51+
-- [Perses](https://github.com/perses/perses) repository has been cloned and is available locally.
+- [Perses](https://perses.dev/perses/docs/installation/in-a-container/) v0.51+ running locally or in a remote environment.
 
 ## Generate a plugin module with a Datasource plugin
 
@@ -281,13 +281,13 @@ export function ClusterSentimentPanelComponent(props: ClusterSentimentPanelProps
 percli plugin build
 ```
 
-2. Make sure the perses configuration has the plugin development mode enabled. In the `<perses root>/perses/dev/config.yaml`.
+2. Make sure the perses configuration has the plugin development mode enabled. You can do this by adding at the root of your Perses configuration file (usually `config.yaml` or `perses-config.yaml`) the following lines:
 ```yaml
 plugin:
   enable_dev: true
 ```
 
-3. Start your local Perses instance. You can do this in one of two ways:
+3. We are assuming you have followed the instruction to install and run Perses. If it is not the case, you can do this in one of two ways:
 
    - **Option 1: From source**
      1. Follow the official instructions to build and run Perses from source: [Install from Source](https://perses.dev/perses/docs/installation/from-source/)

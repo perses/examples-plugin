@@ -1,6 +1,6 @@
+import { DatasourceApi } from '@perses-dev/client';
 import { generateChartsTheme, getTheme } from '@perses-dev/components';
 import type { GlobalDatasourceResource } from '@perses-dev/core';
-import { type DatasourceApi } from '@perses-dev/dashboards';
 import { QueryClient } from '@tanstack/react-query';
 
 const globalDatasource: GlobalDatasourceResource = {

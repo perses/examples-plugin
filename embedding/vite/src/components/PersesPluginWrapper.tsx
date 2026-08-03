@@ -7,17 +7,23 @@ import { DataQueriesProvider, PluginRegistry, TimeRangeProvider } from '@perses-
 import { QueryClientProvider } from '@tanstack/react-query';
 import { chartsTheme, datasourceApi, muiTheme, queryClient } from '../persesApi';
 import { pluginLoader } from './PersesPluginRegistry';
+import { useState } from 'react';
+import { TimeRangeValue } from '@perses-dev/spec';
 
 export function PersesPluginWrapper() {
-  const persesTimeRange = {
-    pastDuration: '1h' as DurationString,
-  };
+  const [persesTimeRange, setPersesTimeRange] = useState<TimeRangeValue>({ pastDuration: '1h' });
+  const [persesRefreshInterval, setPersesRefreshInterval] = useState<DurationString>('5m');
 
   const queryDefinitions = [
     {
-      kind: 'PrometheusTimeSeriesQuery',
+      kind: 'TimeSeriesQuery',
       spec: {
-        query: 'up',
+        plugin: {
+          kind: 'PrometheusTimeSeriesQuery',
+          spec: {
+            query: 'up',
+          },
+        },
       },
     },
   ];
@@ -45,7 +51,12 @@ export function PersesPluginWrapper() {
         <ChartsProvider chartsTheme={chartsTheme}>
           <PluginRegistry pluginLoader={pluginLoader}>
             <QueryClientProvider client={queryClient}>
-              <TimeRangeProvider timeRange={persesTimeRange}>
+              <TimeRangeProvider
+                timeRange={persesTimeRange}
+                setTimeRange={setPersesTimeRange}
+                setRefreshInterval={setPersesRefreshInterval}
+                refreshInterval={persesRefreshInterval}
+              >
                 <VariableProvider>
                   <DatasourceStoreProvider datasourceApi={datasourceApi}>
                     <DataQueriesProvider definitions={queryDefinitions}>

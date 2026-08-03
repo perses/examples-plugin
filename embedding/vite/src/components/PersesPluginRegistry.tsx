@@ -15,7 +15,10 @@ import * as staticListVariablePlugin from '@perses-dev/static-list-variable-plug
 export const pluginLoader = dynamicImportPluginLoader([
   {
     resource: timeseriesChartPlugin.getPluginModule(),
-    importPlugin: () => Promise.resolve(timeseriesChartPlugin),
+    importPlugin: () => {
+      console.log(timeseriesChartPlugin);
+      return Promise.resolve(timeseriesChartPlugin);
+    },
   },
   {
     resource: prometheusPlugin.getPluginModule(),

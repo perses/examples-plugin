@@ -1,10 +1,11 @@
 import { ThemeProvider, Typography } from '@mui/material';
 import { ChartsProvider } from '@perses-dev/components';
-import { DurationString, PanelDefinition } from '@perses-dev/core';
 import { DatasourceStoreProvider, Panel, VariableProvider } from '@perses-dev/dashboards';
 import { DataQueriesProvider, PluginRegistry, TimeRangeProvider } from '@perses-dev/plugin-system';
 
+import { DurationString, PanelDefinition, TimeRangeValue } from '@perses-dev/spec';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import { chartsTheme, datasourceApi, muiTheme, queryClient } from '../persesApi';
 import { pluginLoader } from './PersesPluginRegistry';
 
@@ -15,9 +16,14 @@ export function PersesPluginWrapper() {
 
   const queryDefinitions = [
     {
-      kind: 'PrometheusTimeSeriesQuery',
+      kind: 'TimeSeriesQuery',
       spec: {
-        query: 'up',
+        plugin: {
+          kind: 'PrometheusTimeSeriesQuery',
+          spec: {
+            query: 'up',
+          },
+        },
       },
     },
   ];
@@ -35,6 +41,9 @@ export function PersesPluginWrapper() {
     },
   };
 
+  const [timeRange, setTimeRange] = useState<TimeRangeValue>(persesTimeRange);
+  const [refreshInterval, setRefreshInterval] = useState<DurationString | undefined>(undefined);
+
   return (
     <>
       <h1>Plugin Embedding - Single Panel</h1>
@@ -45,7 +54,12 @@ export function PersesPluginWrapper() {
         <ChartsProvider chartsTheme={chartsTheme}>
           <PluginRegistry pluginLoader={pluginLoader}>
             <QueryClientProvider client={queryClient}>
-              <TimeRangeProvider timeRange={persesTimeRange}>
+              <TimeRangeProvider
+                timeRange={timeRange}
+                setTimeRange={setTimeRange}
+                setRefreshInterval={setRefreshInterval}
+                refreshInterval={refreshInterval}
+              >
                 <VariableProvider>
                   <DatasourceStoreProvider datasourceApi={datasourceApi}>
                     <DataQueriesProvider definitions={queryDefinitions}>

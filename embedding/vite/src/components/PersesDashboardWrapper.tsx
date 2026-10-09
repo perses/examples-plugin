@@ -35,6 +35,7 @@ export function PersesDashboardWrapper() {
                       isEditing={false}
                       isCreating={false}
                       isDatasourceEnabled={true}
+                      isAnnotationEnabled={false}
                     />
                   </PluginRegistry>
                 </ErrorBoundary>

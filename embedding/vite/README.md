@@ -7,6 +7,7 @@ You want to embed Perses dashboards or panels into your React application.
 ## Example Overview
 
 This example demonstrates how to:
+
 - Embed a full Perses dashboard
 - Embed a single Perses panel
 - Load multiple Perses plugins
@@ -100,7 +101,7 @@ export function PersesDashboardWrapper() {
 // components/PersesPluginWrapper.tsx
 import { ThemeProvider, Typography } from '@mui/material';
 import { ChartsProvider } from '@perses-dev/components';
-import { DurationString, PanelDefinition } from '@perses-dev/core';
+import { DurationString, PanelDefinition } from '@perses-dev/client';
 import { DatasourceStoreProvider, Panel, VariableProvider } from '@perses-dev/dashboards';
 import { DataQueriesProvider, PluginRegistry, TimeRangeProvider } from '@perses-dev/plugin-system';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -110,7 +111,17 @@ import { pluginLoader } from './PersesPluginRegistry';
 export function PersesPluginWrapper() {
   const persesTimeRange = { pastDuration: '1h' as DurationString };
   const queryDefinitions = [
-    { kind: 'PrometheusTimeSeriesQuery', spec: { query: 'up' } },
+    {
+      kind: 'TimeSeriesQuery',
+      spec: {
+        plugin: {
+          kind: 'PrometheusTimeSeriesQuery',
+          spec: {
+            query: 'up',
+          },
+        },
+      },
+    },
   ];
   const panelDefinition: PanelDefinition = {
     kind: 'Panel',
@@ -119,12 +130,19 @@ export function PersesPluginWrapper() {
       plugin: { kind: 'TimeSeriesChart', spec: {} },
     },
   };
+  const [timeRange, setTimeRange] = useState<TimeRangeValue>(persesTimeRange);
+  const [refreshInterval, setRefreshInterval] = useState<DurationString | undefined>(undefined);
   return (
     <ThemeProvider theme={muiTheme}>
       <ChartsProvider chartsTheme={chartsTheme}>
         <PluginRegistry pluginLoader={pluginLoader}>
           <QueryClientProvider client={queryClient}>
-            <TimeRangeProvider timeRange={persesTimeRange}>
+            <TimeRangeProvider
+              timeRange={timeRange}
+              setTimeRange={setTimeRange}
+              setRefreshInterval={setRefreshInterval}
+              refreshInterval={refreshInterval}
+            >
               <VariableProvider>
                 <DatasourceStoreProvider datasourceApi={datasourceApi}>
                   <DataQueriesProvider definitions={queryDefinitions}>

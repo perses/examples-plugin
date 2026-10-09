@@ -7,4 +7,20 @@ export default defineConfig({
   define: {
     global: 'window',
   },
+  resolve: {
+    alias: [
+      {
+        find: /^mdi-material-ui\/(?!esm\/)(.*)$/,
+        replacement: 'mdi-material-ui/esm/$1',
+      },
+    ],
+  },
+  build: {
+    target: 'esnext',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext',
+    },
+  },
 });
